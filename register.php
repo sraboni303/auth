@@ -1,4 +1,4 @@
-<?php include_once "autoload.php"; ?>
+<?php include_once "app/autoload.php"; ?>
 
 <?php 
 /**
@@ -13,6 +13,7 @@ if (isset($_POST['submit'])) {
 	$mobile = $_POST['mobile'];
 	$age = $_POST['age'];
 	$pass = $_POST['pass'];
+	$cpass = $_POST['cpass'];
 
 	if (isset($_POST['location'])) {
 		$location = $_POST['location'];
@@ -22,6 +23,8 @@ if (isset($_POST['submit'])) {
 		$gender = $_POST['gender'];
 	}
 
+	// Terms condition:
+	$terms = "disagree";
 	if (isset($_POST['terms'])) {
 		$terms = $_POST['terms'];
 	}
@@ -37,8 +40,20 @@ if (isset($_POST['submit'])) {
 	/**
 	 * Validation Error:
 	 */
-	if (empty($name) || empty($uname) || empty($email) || empty($mobile) || empty($age) || empty($pass) || empty($location) || empty($gender) || empty($terms) ) {
+	if (empty($name) || empty($uname) || empty($email) || empty($mobile) || empty($age) || empty($pass) || empty($location) || empty($gender) ) {
 		$notice = val_error('Fill the Required fields');
+	}elseif($terms == "disagree"){
+		$notice = val_error('You must agree first', 'warning');
+	}elseif($pass != $cpass){
+		$notice = val_error('Password not matched', 'warning');
+	}elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+		$notice = val_error('Invalid E-mail address', 'warning');
+	}else{
+
+		$sql = "INSERT INTO users (name, uname, email, mobile, age, password, location, gender, photo) VALUES ('$name', '$uname', '$email', '$mobile', '$age', '$pass', '$location', '$gender', '')";
+		$connection -> query($sql);
+
+		$notice = val_error('Registration Successfull', 'success');
 	}
 
 
@@ -116,11 +131,7 @@ if (isset($_POST['submit'])) {
   		<div class="card p-5">
   			<h2 class="text-center">Register Now</h2>
 
-  			<?php
-				if (isset($notice)) {
-						echo $notice;
-					}
-  			?>
+  			<?php include "templates/notice.php"; ?>
 
   			<div class="card-body">
 				<form method="POST" action="" enctype="multipart/form-data">
