@@ -1,3 +1,23 @@
+<?php include_once "app/autoload.php"; ?>
+
+<?php 
+
+if (isset($_GET['logout']) AND $_GET['logout'] == 'done') {
+
+  session_destroy();
+  
+  header("location:login.php");
+}
+
+
+if (!isset($_SESSION['name'])) {
+
+  header("location:login.php");
+}
+
+
+?>
+
 
 <!doctype html>
 <html lang="en">
@@ -9,7 +29,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
-    <title>Profile</title>
+    <title><?php echo $_SESSION['name']; ?></title>
     <style type="text/css">
       .card-body, .card-body table tr{
         color: #fff;
@@ -24,45 +44,37 @@
   <body>
 
     <div class="container w-50 my-5">
+      <a class="btn btn-sm btn-danger" href="allusers.php">Back</a>
       <div class="card">
         <div class="card-body text-center">
-          <img class="my-3 shadow-sm" style="width: 300px; height: 300px; border-radius: 50%; border: 10px solid #fff;" src="img/member.jpg">
-          <h2>Full Name</h2>
-          <h4 class="mb-4">username</h4>
+          <img class="my-3 shadow-sm" style="width: 300px; height: 300px; border-radius: 50%; border: 10px solid #fff;" src="photos/<?php echo $_SESSION['photo']; ?>">
+          <h2><?php echo $_SESSION['name']; ?></h2>
+          <h4 class="mb-4"><?php echo $_SESSION['uname']; ?></h4>
           <table class="table table-striped">
-            <tr>
-              <th>ID</th>
-              <td>01</td>
-            </tr>
-
+           
             <tr>
               <th>E-mail</th>
-              <td>example@gmail.com</td>
+              <td><?php echo $_SESSION['uname']; ?></td>
             </tr>
 
             <tr>
               <th>Mobile</th>
-              <td>01234567891</td>
+              <td><?php echo $_SESSION['mobile']; ?></td>
             </tr>
 
             <tr>
               <th>Age</th>
-              <td>20</td>
+              <td><?php echo $_SESSION['age']; ?></td>
             </tr>
 
             <tr>
               <th>Location</th>
-              <td>Dhaka</td>
+              <td><?php echo $_SESSION['location']; ?></td>
             </tr>
 
             <tr>
               <th>Gender</th>
-              <td>Male</td>
-            </tr>
-
-            <tr>
-              <th>Password</th>
-              <td>fg43fse</td>
+              <td><?php echo $_SESSION['gender']; ?></td>
             </tr>
 
             <tr>
@@ -71,7 +83,7 @@
             </tr>
           </table>
 
-          <a href="#" class="btn btn-secondary my-3">Logout</a>
+          <a href="?logout=done" class="btn btn-secondary my-3">Logout</a>
         </div>
       </div>
     </div>

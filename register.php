@@ -15,6 +15,7 @@ if (isset($_POST['submit'])) {
 	$pass = $_POST['pass'];
 	$cpass = $_POST['cpass'];
 
+
 	if (isset($_POST['location'])) {
 		$location = $_POST['location'];
 	}
@@ -30,11 +31,34 @@ if (isset($_POST['submit'])) {
 	}
 
 
+	// Password Hash:
+	$hash_pass = password_hash($pass, PASSWORD_DEFAULT);
+
+
+	// Username Check:
+	$uname_check =val_check('users', 'uname', $uname);
+
+
+	// E-mail Check:
+	$email_check = val_check('users', 'email', $email);
+
+	// Mobile Check:
+	$mobile_check = val_check('users', 'mobile', $mobile);
+
+
 	// Image Information:
 	$file_name = $_FILES['photo']['name'];
 	$file_tmp_name = $_FILES['photo']['tmp_name'];
 
 	$unique_file_name = md5( time() . rand() . $file_tmp_name );
+
+
+
+
+
+
+
+
 
 
 	/**
@@ -48,12 +72,19 @@ if (isset($_POST['submit'])) {
 		$notice = val_error('Password not matched', 'warning');
 	}elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
 		$notice = val_error('Invalid E-mail address', 'warning');
+	}elseif($uname_check > 0) {
+		$notice = val_error('Username Aready Exists', 'warning');
+	}elseif($email_check > 0) {
+		$notice = val_error('E-mail Aready Exists', 'warning');
+	}elseif($mobile_check > 0) {
+		$notice = val_error('Mobile Aready Exists', 'warning');
 	}else{
 
-		$sql = "INSERT INTO users (name, uname, email, mobile, age, password, location, gender, photo) VALUES ('$name', '$uname', '$email', '$mobile', '$age', '$pass', '$location', '$gender', '')";
-		$connection -> query($sql);
+		insert( "INSERT INTO users (name, uname, email, mobile, age, password, location, gender, photo) VALUES ('$name', '$uname', '$email', '$mobile', '$age', '$hash_pass', '$location', '$gender', '$unique_file_name')" );
 
-		$notice = val_error('Registration Successfull', 'success');
+		move_uploaded_file($file_tmp_name, 'photos/' . $unique_file_name);
+
+		header("location:login.php");
 	}
 
 

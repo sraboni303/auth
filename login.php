@@ -1,3 +1,16 @@
+<?php include_once "app/autoload.php"; ?>
+
+
+<?php 
+
+if (isset($_SESSION['name'])) {
+  
+  header("location:profile.php");
+}
+
+?>
+
+
 
 <!doctype html>
 <html lang="en">
@@ -42,27 +55,99 @@
 
   </head>
   <body>
+<?php 
 
+if (isset($_POST['log_submit'])) {
+  
+  // Get Values:
+  $login = $_POST['log_info'];
+  $pass = $_POST['log_pass'];
+
+
+  // Validation:
+  if (empty($login) || empty($pass)) {
+    $notice = val_error('Fill the Required Fields', 'warning');
+  }else{
+
+    $sql = "SELECT * FROM users WHERE email='$login' OR uname='$login' ";
+    $login_data = $connection -> query($sql);
+    $login_num = $login_data -> num_rows;
+
+    $login_user = $login_data -> fetch_assoc();
+
+
+    if ($login_num == 1) {
+
+      if (password_verify($pass, $login_user['password'])) {
+
+        $_SESSION['user_id'] = $login_user['id'];
+        $_SESSION['name'] = $login_user['name'];
+        $_SESSION['uname'] = $login_user['uname'];
+        $_SESSION['email'] = $login_user['email'];
+        $_SESSION['mobile'] = $login_user['mobile'];
+        $_SESSION['age'] = $login_user['age'];
+        $_SESSION['pass'] = $login_user['pass'];
+        $_SESSION['location'] = $login_user['location'];
+        $_SESSION['gender'] = $login_user['gender'];
+        $_SESSION['photo'] = $login_user['photo'];
+
+        header("location:profile.php");
+        
+      }else{
+        $notice = val_error('Wrong Password', 'warning');
+      }
+
+
+
+
+     
+    }else{
+      $notice = val_error('Wrong Username or Email', 'warning');
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+?>
 
 
   	<div class="container w-75 my-5 px-5">
   		<div class="card p-5 w-75">
   			<h2 class="text-center">Login Now</h2>
 
+        <?php require "templates/notice.php"; ?>
+
   			<div class="card-body">
-				<form method="POST" action="" enctype="multipart/form-data">
+				<form method="POST" action="">
 
 				  <div class="form-group form-group-sm">
 				    <label>Username / Email</label>
-				    <input type="text" class="form-control form-control-sm" name="uname">
+				    <input type="text" class="form-control form-control-sm" name="log_info">
 				  </div>
 
 				  <div class="form-group form-group-sm">
 				    <label>Password</label>
-				    <input type="password" class="form-control form-control-sm" name="pass">
+				    <input type="password" class="form-control form-control-sm" name="log_pass">
 				  </div>
 
-				  <button type="submit" class="btn btn-primary" name="submit">Login</button>
+				  <button type="submit" class="btn btn-primary" name="log_submit">Login</button>
 				</form>  				
   			</div>
   			<div class="card-footer">
