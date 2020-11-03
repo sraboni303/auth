@@ -80,6 +80,11 @@ if(isset($_GET['delete_id'])){
 
   </head>
   <body>
+    <div class="container">
+        <a class="btn btn-sm btn-success" href="register.php">Registration</a>
+        <a class="btn btn-sm btn-success" href="login.php">Login</a>
+        <a class="btn btn-sm btn-success" href="profile.php">Profile</a>
+    </div>
 
     <div class="container my-5">
       <a class="btn btn-sm btn-danger" href="profile.php">Your Profile</a>
@@ -108,6 +113,7 @@ if(isset($_GET['delete_id'])){
           
 
           <tr>
+
             <td><?php echo $i; $i++; ?></td>
             <td><?php echo $users_data['name']; ?></td>
             <td><?php echo $users_data['email']; ?></td>
@@ -123,22 +129,23 @@ if(isset($_GET['delete_id'])){
                   <img style="border: 5px solid red;" src="photos/<?php echo $users_data['photo']; ?>">
                 </a>
               <?php endif; ?>
-
              
             </td>
+
+
             <td>
 
               <?php if($users_data['id'] == $_SESSION['user_id']) : ?>
-                <a href="edit.php?edit_id=<?php echo $users_data['id']; ?>" class="btn btn-info">Edit</a>
-              <a id="delete_btn" href="?delete_id=<?php echo $users_data['id']; ?>&photo=<?php echo $users_data['photo']; ?> " class="btn btn-danger">Delete</a>                
-              <?php else : ?>
-                <a href="profile.php?profile_id=<?php echo $users_data['id']; ?>" class="btn btn-warning">View</a>
+                <a href="#" class="btn btn-sm btn-info">Update</a>
+                <a id="delete_btn" href="?delete_id=<?php echo $users_data['id']; ?> &photo=<?php echo $users_data['photo']; ?> " class="btn btn-sm btn-danger">Delete</a>
+
+              <?php else: ?>
+                <a href="profile.php?user_id=<?php echo $users_data['id']; ?>" class="btn btn-sm btn-warning">View</a>
+
               <?php endif; ?>
 
-
-
-
             </td>
+
           </tr>
 
 <?php } ?>

@@ -3,10 +3,26 @@
 
 <?php 
 
-if (isset($_SESSION['name'])) {
+
+// Preventing Login Page access:
+if (isset($_SESSION['user_id'])) {
   
   header("location:profile.php");
 }
+
+
+// Set COOKIE for auto login:
+if (isset($_COOKIE['user_info'])) {
+  $id = $_COOKIE['user_info'];
+  $sql = "SELECT * FROM users WHERE id='$id' ";
+  $cookie = $connection -> query($sql);
+  $user_cookie = $cookie -> fetch_assoc();
+
+  $_SESSION['user_id'] = $user_cookie['id'];
+  
+  header("location:profile.php");
+}
+
 
 ?>
 
@@ -50,11 +66,27 @@ if (isset($_SESSION['name'])) {
     		padding: 5px 10px;
     		background-color: rgba(0, 0, 0, .3);
     	}
+
+      .card-text{
+        color: #fff;
+      }
+
+      .card-text:hover{
+        text-decoration: none;
+      }
     </style>
 
 
   </head>
   <body>
+
+    <!-- All Pages Links -->
+    <div class="container">
+        <a class="btn btn-sm btn-success" href="register.php">Registration</a>
+        <a class="btn btn-sm btn-success" href="allusers.php">All Users</a>
+        <a class="btn btn-sm btn-success" href="profile.php">Profile</a>
+    </div>
+
 <?php 
 
 if (isset($_POST['log_submit'])) {
@@ -81,17 +113,11 @@ if (isset($_POST['log_submit'])) {
       if (password_verify($pass, $login_user['password'])) {
 
         $_SESSION['user_id'] = $login_user['id'];
-        $_SESSION['name'] = $login_user['name'];
-        $_SESSION['uname'] = $login_user['uname'];
-        $_SESSION['email'] = $login_user['email'];
-        $_SESSION['mobile'] = $login_user['mobile'];
-        $_SESSION['age'] = $login_user['age'];
-        $_SESSION['pass'] = $login_user['pass'];
-        $_SESSION['location'] = $login_user['location'];
-        $_SESSION['gender'] = $login_user['gender'];
-        $_SESSION['photo'] = $login_user['photo'];
+        setcookie('user_info', $login_user['id'], time() + (60*60*24*30*12) );
+
 
         header("location:profile.php");
+
         
       }else{
         $notice = val_error('Wrong Password', 'warning');
@@ -132,6 +158,7 @@ if (isset($_POST['log_submit'])) {
   		<div class="card p-5 w-75">
   			<h2 class="text-center">Login Now</h2>
 
+        <!-- Show Notice -->
         <?php require "templates/notice.php"; ?>
 
   			<div class="card-body">
@@ -155,6 +182,46 @@ if (isset($_POST['log_submit'])) {
   			</div>
   		</div>
   	</div>	
+
+
+    <!-- Recent Login Section -->
+    <div class="container">
+      <div class="row my-5">
+
+<?php 
+
+$recent_user_info = '';
+if (isset($_COOKIE['recent_user'])) {
+    $recent_user_info = $_COOKIE['recent_user'];  
+  }
+
+
+  if( !empty($recent_user_info) ) :
+  $sql = "SELECT * FROM users WHERE id IN($recent_user_info)";
+  $recent_user_data = $connection -> query($sql);
+
+  while($data = $recent_user_data -> fetch_assoc() ) :
+
+?>
+
+
+        <div class="col-md-3 mb-5">
+          <a href="#">
+          <div class="card">
+            <div class="card-body">
+              <img style="max-width: 100%;" src="photos/<?php echo $data['photo']; ?>">
+            </div>
+            <div class="card-footer card-text text-center"><?php echo $data['name']; ?></div>
+          </div>
+          </a>
+        </div>
+
+<?php endwhile; endif; ?>
+
+      </div>
+    </div>
+
+
 
 
 

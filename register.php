@@ -156,6 +156,11 @@ if (isset($_POST['submit'])) {
   </head>
   <body>
 
+    <div class="container">
+        <a class="btn btn-sm btn-success" href="login.php">Login</a>
+        <a class="btn btn-sm btn-success" href="allusers.php">All Users</a>
+        <a class="btn btn-sm btn-success" href="profile.php">Profile</a>
+    </div>
 
 
   	<div class="container w-75 my-5">
